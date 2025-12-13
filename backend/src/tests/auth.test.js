@@ -28,4 +28,24 @@ describe("Auth API - TDD Phase", () => {
     expect(response.body.email).toBe("test@example.com");
   });
 
+  it("should login an existing user", async () => {
+  await request(app)
+    .post("/api/auth/register")
+    .send({
+      email: "login@test.com",
+      password: "password123"
+    });
+
+  const response = await request(app)
+    .post("/api/auth/login")
+    .send({
+      email: "login@test.com",
+      password: "password123"
+    });
+
+  expect(response.statusCode).toBe(200);
+  expect(response.body.message).toBe("Login successful");
+});
+
+
 });
