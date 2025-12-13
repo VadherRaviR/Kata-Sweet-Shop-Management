@@ -28,23 +28,47 @@ describe("Auth API - TDD Phase", () => {
     expect(response.body.email).toBe("test@example.com");
   });
 
-  it("should login an existing user", async () => {
+ it("should login and return jwt token", async () => {
   await request(app)
     .post("/api/auth/register")
     .send({
-      email: "login@test.com",
+      email: "jwt@test.com",
       password: "password123"
     });
 
   const response = await request(app)
     .post("/api/auth/login")
     .send({
-      email: "login@test.com",
+      email: "jwt@test.com",
       password: "password123"
     });
 
   expect(response.statusCode).toBe(200);
-  expect(response.body.message).toBe("Login successful");
+  expect(response.body.token).toBeDefined();
+});
+
+it("should deny access to admin route for normal user", async () => {
+  await request(app)
+    .post("/api/auth/register")
+    .send({
+      email: "user@test.com",
+      password: "password123"
+    });
+
+  const loginRes = await request(app)
+    .post("/api/auth/login")
+    .send({
+      email: "user@test.com",
+      password: "password123"
+    });
+
+  const token = loginRes.body.token;
+
+  const response = await request(app)
+    .get("/api/admin/test")
+    .set("Authorization", `Bearer ${token}`);
+
+  expect(response.statusCode).toBe(403);
 });
 
 
