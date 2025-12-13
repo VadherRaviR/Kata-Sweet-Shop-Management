@@ -4,4 +4,3 @@ module.exports = {
   coverageDirectory: "coverage",
   setupFiles: ["dotenv/config"]
 };
-

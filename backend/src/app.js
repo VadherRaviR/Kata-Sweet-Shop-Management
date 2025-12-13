@@ -16,5 +16,9 @@ const adminRoutes = require("./routes/admin.routes");
 
 app.use("/api/admin", adminRoutes);
 
+const sweetRoutes = require("./routes/sweet.routes");
+app.use("/api/sweets", sweetRoutes);
+
+
 
 module.exports = app;
