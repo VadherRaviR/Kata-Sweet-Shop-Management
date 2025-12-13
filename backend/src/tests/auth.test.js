@@ -1,5 +1,18 @@
 const request = require("supertest");
+const mongoose = require("mongoose");
 const app = require("../app");
+
+beforeAll(async () => {
+  await mongoose.connect("mongodb://127.0.0.1:27017/sweet-shop-test");
+});
+
+afterEach(async () => {
+  await mongoose.connection.db.dropDatabase();
+});
+
+afterAll(async () => {
+  await mongoose.connection.close();
+});
 
 describe("Auth API - TDD Phase", () => {
 
@@ -12,6 +25,7 @@ describe("Auth API - TDD Phase", () => {
       });
 
     expect(response.statusCode).toBe(201);
+    expect(response.body.email).toBe("test@example.com");
   });
 
 });
