@@ -3,6 +3,12 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const app = require("../app");
 const User = require("../models/User");
+const Sweet = require("../models/Sweet");
+
+beforeEach(async () => {
+  await Sweet.deleteMany({});
+});
+
 
 let adminToken;
 let userToken;
@@ -162,6 +168,36 @@ it("should list all available sweets for authenticated user", async () => {
   expect(res.statusCode).toBe(200);
   expect(Array.isArray(res.body)).toBe(true);
   expect(res.body.length).toBeGreaterThan(0);
+});
+it("should search sweets by name and category", async () => {
+  // Create sweets
+  await request(app)
+    .post("/api/sweets")
+    .set("Authorization", `Bearer ${adminToken}`)
+    .send({
+      name: "Chocolate Barfi",
+      category: "Indian",
+      price: 15,
+      quantity: 10
+    });
+
+  await request(app)
+    .post("/api/sweets")
+    .set("Authorization", `Bearer ${adminToken}`)
+    .send({
+      name: "Milk Cake",
+      category: "Indian",
+      price: 20,
+      quantity: 5
+    });
+
+  const res = await request(app)
+    .get("/api/sweets/search?name=barfi")
+    .set("Authorization", `Bearer ${userToken}`);
+
+  expect(res.statusCode).toBe(200);
+  expect(res.body.length).toBe(1);
+  expect(res.body[0].name).toContain("Barfi");
 });
 
 });
