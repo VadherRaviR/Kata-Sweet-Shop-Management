@@ -40,6 +40,10 @@ router.post("/:id/restock", auth, admin, async (req, res) => {
 
   res.status(200).json(sweet);
 });
+router.get("/", auth, async (req, res) => {
+  const sweets = await Sweet.find();
+  res.status(200).json(sweets);
+});
 
 
 module.exports = router;
